@@ -50,6 +50,10 @@ dependencies:
   flutter_screenutil: ^5.9.3
   bloc_test: ^10.0.0
   mocktail: ^1.0.4
+  pdf: ^3.10.1
+  printing: ^5.10.0
+  file_picker:
+
 
 dev_dependencies:
   flutter_test:

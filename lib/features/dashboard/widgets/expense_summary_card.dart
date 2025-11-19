@@ -5,10 +5,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../bloc/expense_bloc.dart';
 
 
-class ExpenseSummaryCard extends StatelessWidget {
+class ExpenseSummaryCard extends StatefulWidget {
    ExpenseSummaryCard({super.key , required this.totalBalanceUSD , required this.totalBalanceEGP , required this.totalIncomeUSD , required this.totalIncomeEGP , required this.totalExpensesUSD , required this.totalExpensesEGP});
 
-  double  totalBalanceUSD ;
+   double  totalBalanceUSD ;
   double  totalBalanceEGP ;
 
   double  totalIncomeUSD ;
@@ -17,6 +17,12 @@ class ExpenseSummaryCard extends StatelessWidget {
   double  totalExpensesUSD ;
   double  totalExpensesEGP ;
 
+  @override
+  State<ExpenseSummaryCard> createState() => _ExpenseSummaryCardState();
+}
+
+class _ExpenseSummaryCardState extends State<ExpenseSummaryCard> {
+   String currency = "USD";
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -30,12 +36,28 @@ class ExpenseSummaryCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+          Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
             Text("Total Balance",
                 style: TextStyle(color: Colors.white70, fontSize: 16.sp)),
+
+            PopupMenuButton<String>(
+              icon: Icon(Icons.more_vert, color: Colors.white),
+              onSelected: (value) {
+                setState(() => currency = value);
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem(value: "USD", child: Text("Show USD")),
+                PopupMenuItem(value: "EGP", child: Text("Show EGP")),
+              ],
+            ),
+          ],
+        ),
             SizedBox(height: 6.h),
 
             Text(
-              "\$${totalBalanceUSD.toStringAsFixed(2)}",
+             currency == "EGP" ? "E£${widget.totalBalanceEGP.toStringAsFixed(2)}" : "\$${widget.totalBalanceUSD.toStringAsFixed(2)}",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 32.sp,
@@ -43,23 +65,15 @@ class ExpenseSummaryCard extends StatelessWidget {
               ),
             ),
 
-            Text(
-              "E£${totalBalanceEGP.toStringAsFixed(2)}",
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: 18.sp,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
 
             SizedBox(height: 24.h),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _incomeBox(totalIncomeUSD, totalIncomeEGP),
+                _incomeBox(widget.totalIncomeUSD, widget.totalIncomeEGP),
                 SizedBox(width: 20.w),
-                _expenseBox(totalExpensesUSD, totalExpensesEGP),
+                _expenseBox(widget.totalExpensesUSD, widget.totalExpensesEGP),
               ],
             ),
           ],
@@ -82,10 +96,10 @@ class ExpenseSummaryCard extends StatelessWidget {
           ],
         ),
         SizedBox(height: 6.h),
-        Text("\$${usd.toStringAsFixed(2)}",
+        Text(
+            currency == "EGP"? "E£${egp.toStringAsFixed(2)}" : "\$${usd.toStringAsFixed(2)}",
             style: TextStyle(color: Colors.white, fontSize: 18.sp, fontWeight: FontWeight.bold)),
-        Text("E£${egp.toStringAsFixed(2)}",
-            style: TextStyle(color: Colors.white70, fontSize: 14.sp)),
+
       ],
     ),
   );
@@ -102,12 +116,12 @@ class ExpenseSummaryCard extends StatelessWidget {
           ],
         ),
         SizedBox(height: 6.h),
-        Text("\$${usd.toStringAsFixed(2)}",
+        Text(
+            currency == "EGP" ? "E£${egp.toStringAsFixed(2)}" : "\$${usd.toStringAsFixed(2)}",
             style: TextStyle(color: Colors.white, fontSize: 18.sp, fontWeight: FontWeight.bold)),
-        Text("E£${egp.toStringAsFixed(2)}",
-            style: TextStyle(color: Colors.white70, fontSize: 14.sp)),
+        // Text("E£${egp.toStringAsFixed(2)}",
+        //     style: TextStyle(color: Colors.white70, fontSize: 14.sp)),
       ],
     ),
   );
-
 }

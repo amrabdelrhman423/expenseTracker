@@ -2,6 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../../../core/models/expense.dart';
 import '../../../core/repositories/expense_repository.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 part 'expense_event.dart';
 part 'expense_state.dart';
@@ -50,12 +52,10 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
       // ---------------------------
 
       // Total Expenses (EGP)
-      final totalExpensesEGP =
-      allExpenses.fold<double>(0, (sum, e) => sum + e.amount);
+      final totalExpensesEGP = allExpenses.fold<double>(0, (sum, e) => sum + e.amountEGP);
 
       // Total Expenses (USD)
-      final totalExpensesUSD =
-      allExpenses.fold<double>(0, (sum, e) => sum + e.convertedAmountUSD);
+      final totalExpensesUSD = allExpenses.fold<double>(0, (sum, e) => sum + e.convertedAmountUSD);
 
       // If you add income later, adjust these:
       final totalIncomeEGP = 471983.0;
@@ -147,5 +147,39 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
   {
     add(LoadExpenses(from: event.from, to: event.to));
   }
+
+
+  Future<void> exportExpensesToPDF(List<Expense> expenses) async {
+
+    final pdf = pw.Document();
+
+    pdf.addPage(
+      pw.Page(
+        build: (context) {
+          return pw.Column(
+            children: [
+              pw.Text('Expenses Report', style: pw.TextStyle(fontSize: 24)),
+              pw.SizedBox(height: 20),
+              pw.Table.fromTextArray(
+                headers: ['ID', 'Category', 'Amount', 'Currency', 'Date'],
+                data: expenses.map((e) => [
+                  e.id,
+                  e.categoryId,
+                  e.amount.toString(),
+                  e.currency,
+                  e.date.toIso8601String(),
+                ]).toList(),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
+    await Printing.layoutPdf(
+      onLayout: (format) async => pdf.save(),
+    );
+  }
+
 
 }

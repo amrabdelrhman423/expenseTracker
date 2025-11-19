@@ -33,6 +33,7 @@ class BottomNavBar extends StatelessWidget {
               FloatingActionButton(
                 backgroundColor: Colors.blue,
                 elevation: 0,
+                shape: const CircleBorder(),  // ← يجبره يكون دايرة 100%
                 onPressed: () {
                   Navigator.pushNamed(context, '/addExpense');
                 },

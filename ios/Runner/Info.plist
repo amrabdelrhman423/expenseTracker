@@ -16,6 +16,22 @@
 	<string>expense_tracker</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+
+	<!-- Camera access -->
+    <key>NSCameraUsageDescription</key>
+    <string>We need access to your camera to allow you to take receipt photos.</string>
+
+    <!-- Photo library access -->
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>We need access to your photo library to allow you to select receipt images.</string>
+
+    <!-- Network access (optional, usually allowed by default) -->
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
+
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>

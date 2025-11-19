@@ -1,29 +1,32 @@
 import 'package:hive/hive.dart';
 
-part 'expense.g.dart'; // run build_runner to generate
+part 'expense.g.dart';
 
 @HiveType(typeId: 0)
 class Expense extends HiveObject {
   @HiveField(0)
-  final String id; // uuid
+  final String id;
 
   @HiveField(1)
   final String categoryId;
 
   @HiveField(2)
-  final double amount; // original amount in selected currency
+  final double amount; // selected currency amount
 
   @HiveField(3)
-  final String currency; // e.g., "EGP"
+  final String currency; // EGP / USD / EUR
 
   @HiveField(4)
-  final double convertedAmountUSD; // converted to USD at save time
+  final double convertedAmountUSD;
 
   @HiveField(5)
   final DateTime date;
 
   @HiveField(6)
-  final String? receiptPath; // local path
+  final String? receiptPath;
+
+  @HiveField(7)
+  final double amountEGP; // ⭐ NEW FIELD
 
   Expense({
     required this.id,
@@ -33,5 +36,6 @@ class Expense extends HiveObject {
     required this.convertedAmountUSD,
     required this.date,
     this.receiptPath,
+    required this.amountEGP, // ⭐ ADD HERE
   });
 }

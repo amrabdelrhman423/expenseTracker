@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,10 +18,12 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   final _formKey = GlobalKey<FormState>();
   String? _categoryId = 'entertainment';
   final _amountController = TextEditingController();
-  final String _currency = 'EGP';
+  String selectedCurrency = "EGP";
   DateTime _date = DateTime.now();
+
   String? _receiptPath;
   final ImagePicker _picker = ImagePicker();
+  final List<String> currencies = ["EGP", "USD", "EUR"];
 
   @override
   void dispose() {
@@ -29,7 +32,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   }
 
   Future<void> _pickReceipt() async {
-    final result = await showModalBottomSheet<ImageSource>(
+    final result = await showModalBottomSheet<String>(
       context: context,
       builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,
@@ -37,20 +40,42 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           ListTile(
             leading: Icon(Icons.photo_library),
             title: Text('Gallery'),
-            onTap: () => Navigator.pop(context, ImageSource.gallery),
+            onTap: () => Navigator.pop(context, "gallery"),
           ),
           ListTile(
             leading: Icon(Icons.camera_alt),
             title: Text('Camera'),
-            onTap: () => Navigator.pop(context, ImageSource.camera),
+            onTap: () => Navigator.pop(context, "camera"),
+          ),
+          ListTile(
+            leading: Icon(Icons.file_present),
+            title: Text('Pick File'),
+            onTap: () => Navigator.pop(context, "file"),
           ),
         ],
       ),
     );
 
-    if (result != null) {
-      final x = await _picker.pickImage(source: result);
-      if (x != null) setState(() => _receiptPath = x.path);
+    if (result == null) return;
+
+    if (result == "gallery") {
+      final picked = await _picker.pickImage(source: ImageSource.gallery);
+      if (picked != null) setState(() => _receiptPath = picked.path);
+    }
+
+    else if (result == "camera") {
+      final picked = await _picker.pickImage(source: ImageSource.camera);
+      if (picked != null) setState(() => _receiptPath = picked.path);
+    }
+
+    else if (result == "file") {
+      final fileResult = await FilePicker.platform.pickFiles(
+        allowMultiple: false,
+        allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
+      );
+      if (fileResult != null && fileResult.files.single.path != null) {
+        setState(() => _receiptPath = fileResult.files.single.path!);
+      }
     }
   }
 
@@ -78,7 +103,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     context.read<ExpenseBloc>().add(AddExpenseEvent(
       categoryId: _categoryId!,
       amount: amount,
-      currency: _currency,
+      currency: selectedCurrency,
       date: _date,
       receiptPath: _receiptPath,
     ));
@@ -153,6 +178,23 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 onChanged: (v) => setState(() => _categoryId = v),
               ),
             ),
+            const SizedBox(height: 20),
+
+            /// CURRENCY DROPDOWN
+            const Text("Currency"),
+            const SizedBox(height: 8),
+            DropdownButtonFormField<String>(
+              value: selectedCurrency,
+              items: currencies.map((e) => DropdownMenuItem(
+                value: e,
+                child: Text(e),
+              )).toList(),
+              onChanged: (value) => setState(() => selectedCurrency = value!),
+              decoration: InputDecoration(
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+            ),
+
             SizedBox(height: 24.h),
             _buildLabel('Amount'),
             SizedBox(height: 8.h),
@@ -160,7 +202,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               controller: _amountController,
               keyboardType: TextInputType.numberWithOptions(decimal: true),
               decoration: InputDecoration(
-                hintText: 'E£50,000',
+                hintText: '${getCurrencySymbol(selectedCurrency)}50,000',
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.r)),
@@ -233,27 +275,27 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               itemBuilder: (context, index) {
                 final category = CategoryConstants.categories[index];
                 final isSelected = _categoryId == category.id;
-                final color = _getCategoryColor(category.iconName).withOpacity(isSelected ? 1.0 : 0.5);
+                final color = CategoryConstants.getCategoryColor(category.iconName).withOpacity(isSelected ? 1.0 : 0.4);
                 return GestureDetector(
                   onTap: () => setState(() => _categoryId = category.id),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        width: 50.w,
-                        height: 50.w,
+                        width: 65.w,
+                        height: 45.w,
                         decoration: BoxDecoration(color: color, shape: BoxShape.circle),
                         child: Icon(
                           CategoryConstants.getIconData(category.iconName),
                           color: Colors.white,
-                          size: 24.sp,
+                          size: 20.sp,
                         ),
                       ),
                       SizedBox(height: 8.h),
                       Text(
                         category.title,
                         style: TextStyle(
-                          fontSize: 12.sp,
+                          fontSize: 10.sp,
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                           color: isSelected ? color : Colors.black.withOpacity(0.5),
                         ),
@@ -277,20 +319,21 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     );
   }
 
-  Color _getCategoryColor(String iconName) {
-    switch (iconName) {
-      case 'shopping_cart':
-        return Colors.orange;
-      case 'local_cafe':
-        return Colors.purple;
-      case 'directions_car':
-        return Colors.blue;
-      case 'home':
-        return Colors.green;
-      case 'entertainment':
-        return Colors.red;
+  String getCurrencySymbol(String currency) {
+    switch (currency.toUpperCase()) {
+      case 'USD':
+        return '\$';
+      case 'EGP':
+        return 'E£';
+      case 'EUR':
+        return '€';
+      case 'GBP':
+        return '£';
+      case 'SAR':
+        return '﷼';
       default:
-        return Colors.blueGrey;
+        return currency; // fallback
     }
   }
+
 }

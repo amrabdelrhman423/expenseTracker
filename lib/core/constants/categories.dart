@@ -50,5 +50,43 @@ class CategoryConstants {
       return null;
     }
   }
+
+  static Color getCategoryColor(String iconName) {
+    switch (iconName) {
+      case 'shopping_cart':         // Groceries
+        return Colors.orange;
+
+      case 'local_cafe':            // Entertainment
+        return Colors.purple;
+
+      case 'local_gas_station':     // Gas
+        return Colors.teal;
+
+      case 'shopping_bag':          // Shopping
+        return Colors.pinkAccent;
+
+      case 'newspaper':             // News Paper
+        return Colors.indigo;
+
+      case 'directions_car':        // Transport
+        return Colors.blue;
+
+      case 'home':                  // Rent
+        return Colors.green;
+
+      case 'restaurant':            // Food
+        return Colors.redAccent;
+
+      case 'receipt':               // Bills
+        return Colors.brown;
+
+      case 'category':              // Other
+        return Colors.blueGrey;
+
+      default:
+        return Colors.grey;
+    }
+  }
+
 }
 

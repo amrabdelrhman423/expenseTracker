@@ -157,8 +157,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       children: [
                         Text("Recent Expenses", style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold)),
                         TextButton(
-                          onPressed: () {},
-                          child: Text("see all", style: TextStyle(fontSize: 14.sp)),
+                          onPressed: () {
+                            context.read<ExpenseBloc>().exportExpensesToPDF(expenses);
+                          },
+                          child: Text("convert to pdf", style: TextStyle(fontSize: 14.sp)),
                         ),
                       ],
                     ),

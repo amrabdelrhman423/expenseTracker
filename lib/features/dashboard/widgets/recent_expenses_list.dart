@@ -94,13 +94,12 @@ class RecentExpensesList extends StatelessWidget {
               width: 56.w,
               height: 56.w,
               decoration: BoxDecoration(
-                color: _getCategoryColor(category?.iconName ?? '')
-                    .withOpacity(0.1),
+                color: CategoryConstants.getCategoryColor(category?.iconName ?? '').withOpacity(0.1),
                 borderRadius: BorderRadius.circular(14.r),
               ),
               child: Icon(
                 icon,
-                color: _getCategoryColor(category?.iconName ?? ''),
+                color: CategoryConstants.getCategoryColor(category?.iconName ?? ''),
                 size: 28.sp,
               ),
             ),
@@ -124,7 +123,7 @@ class RecentExpensesList extends StatelessWidget {
                 Text("\$${expense.convertedAmountUSD.toStringAsFixed(2)}",
                     style: TextStyle(
                         fontSize: 16.sp, fontWeight: FontWeight.bold, color: Colors.red)),
-                Text("E£${expense.amount}",
+                Text("${getCurrencySymbol(expense.currency)}${expense.amount}",
                     style: TextStyle(
                         fontSize: 16.sp, fontWeight: FontWeight.bold, color: Colors.red)),
                 SizedBox(height: 6.h),
@@ -151,19 +150,21 @@ class RecentExpensesList extends StatelessWidget {
   return DateFormat('MMM d, h:mm a').format(date);
 }
 
-  Color _getCategoryColor(String iconName) {
-  switch (iconName) {
-    case 'shopping_cart':
-      return Colors.orange;
-    case 'local_cafe':
-      return Colors.purple;
-    case 'directions_car':
-      return Colors.blue;
-    case 'home':
-      return Colors.green;
-    default:
-      return Colors.blueGrey;
-  }
-}
+   String getCurrencySymbol(String currency) {
+     switch (currency.toUpperCase()) {
+       case 'USD':
+         return '\$';
+       case 'EGP':
+         return 'E£';
+       case 'EUR':
+         return '€';
+       case 'GBP':
+         return '£';
+       case 'SAR':
+         return '﷼';
+       default:
+         return currency; // fallback
+     }
+   }
 
 }

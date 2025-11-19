@@ -20,13 +20,18 @@ class ExpenseRepository {
     required String currency,
     required DateTime date,
     String? receiptPath,
-  }) async {
+  }) async
+  {
+
     // ensure we have rates
+
     debugPrint("cachedRates: $cachedRates");
     final rates = cachedRates ?? await api.fetchLatestRates(base: 'USD').then((r){ cachedRates = r; return r; });
     debugPrint("rates: $rates");
 
     final converted = api.convert(amount: amount, from: currency, to: 'USD', rates: rates!);
+
+    final convertedEGP = api.convert(amount: amount, from: currency, to: 'EGP', rates: rates);
 
     final id = Uuid().v4();
 
@@ -34,6 +39,7 @@ class ExpenseRepository {
       id: id,
       categoryId: categoryId,
       amount: amount,
+      amountEGP: convertedEGP,
       currency: currency,
       convertedAmountUSD: converted,
       date: date,

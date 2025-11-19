@@ -1,14 +1,34 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/currency_rate.dart';
+import 'dart:io';
 
 class ExchangeApi {
 
   final http.Client client;
   ExchangeApi({http.Client? client}) : client = client ?? http.Client();
 
+
+  Future<bool> hasInternetConnection() async {
+    try {
+      final result = await InternetAddress.lookup('example.com')
+          .timeout(Duration(seconds: 3));
+
+      return result.isNotEmpty && result.first.rawAddress.isNotEmpty;
+    } catch (e) {
+      return false;
+    }
+  }
+
   // fetch latest rates with base USD
   Future<CurrencyRate> fetchLatestRates({String base = 'USD'}) async {
+
+    // check network connection
+    final connected = await hasInternetConnection();
+    if (!connected) {
+      throw Exception("No internet connection");
+    }
+
     final uri = Uri.parse('https://open.er-api.com/v6/latest/$base');
 
     final resp = await client.get(uri).timeout(Duration(seconds: 10));

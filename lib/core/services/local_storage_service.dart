@@ -36,6 +36,7 @@ class LocalStorageService {
   }
 
   Future<int> totalCount({DateTime? from, DateTime? to}) async {
+
     final all = _expenseBox().values.toList();
     final filtered = (from != null && to != null)
         ? all.where((x) {
