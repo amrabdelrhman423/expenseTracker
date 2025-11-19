@@ -129,3 +129,70 @@
 - All expenses are currently treated as expenses (no income/expense distinction yet)
 - Currency conversion uses free API (exchangerate.host)
 - Data persists locally using Hive
+
+
+
+- **Feature-based modular structure**
+- Each feature has its **own BLoC**
+- UI reacts to state changes via `BlocBuilder` and `BlocListener`
+
+---
+
+## 🧩 State Management
+
+- **BLoC Pattern** (`flutter_bloc`)
+- Each module has a dedicated BLoC class:
+  - `ExpenseBloc` → manages expense creation and listing
+  - `DashboardBloc` → manages summary and filtering
+- Provides predictable state transitions and testability
+
+---
+
+## 🌐 API Integration
+
+- Uses [Open Exchange Rates API](https://open.er-api.com/v6/latest/USD) (or alternative)
+- Converts expense amounts to USD at save time
+- Handles offline scenarios by storing cached data
+- Error handling for network issues included
+
+---
+
+## 📄 Pagination Strategy
+
+- Local pagination using Hive
+- 10 items per page
+- Supports "Load More" or infinite scroll
+- Filters applied alongside pagination
+
+---
+
+## 🎨 UI Screenshots
+
+![Dashboard](assets/dashboard1.png)  
+![Dashboard](assets/dashboard2.png)  
+![Add Expense](assets/add_expense1.png)  
+![Add Expense](assets/add_expense2.png)  
+![Add Expense](assets/add_expense3.png)  
+
+*Replace placeholders with actual screenshots from your app.*
+
+---
+
+## ⚖️ Trade-offs & Assumptions
+
+- Offline mode supports storage but conversion requires internet
+- Only three currencies supported (USD, EGP, EUR)
+- Single-user app; no authentication
+- PDF/CSV export not implemented yet
+- Hive chosen over SQLite for simplicity
+
+---
+
+## 🏃 How to Run
+
+1. Clone the repo:
+
+```bash
+git clone https://github.com/your-username/expense-tracker-lite.git
+cd expense-tracker-lite
+
