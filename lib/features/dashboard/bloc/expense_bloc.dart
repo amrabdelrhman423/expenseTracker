@@ -7,6 +7,7 @@ part 'expense_event.dart';
 part 'expense_state.dart';
 
 class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
+
   final ExpenseRepository repo;
   static const int pageSize = 10;
 
@@ -18,7 +19,8 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
   }
 
   Future<void> _onLoadExpenses(
-      LoadExpenses event, Emitter<ExpenseState> emit) async {
+      LoadExpenses event, Emitter<ExpenseState> emit) async
+  {
     emit(ExpenseLoading());
 
     try {
@@ -82,8 +84,8 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
     }
   }
 
-  Future<void> _onLoadMoreExpenses(
-      LoadMoreExpenses event, Emitter<ExpenseState> emit) async {
+  Future<void> _onLoadMoreExpenses(LoadMoreExpenses event, Emitter<ExpenseState> emit) async
+  {
     final current = state;
 
     if (current is ExpenseLoaded &&
@@ -123,7 +125,8 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
   }
 
   Future<void> _onAddExpense(
-      AddExpenseEvent event, Emitter<ExpenseState> emit) async {
+      AddExpenseEvent event, Emitter<ExpenseState> emit) async
+  {
     try {
       await repo.addExpense(
         categoryId: event.categoryId,
@@ -140,8 +143,9 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
     }
   }
 
-  Future<void> _onRefreshExpenses(
-      RefreshExpenses event, Emitter<ExpenseState> emit) async {
+  Future<void> _onRefreshExpenses(RefreshExpenses event, Emitter<ExpenseState> emit) async
+  {
     add(LoadExpenses(from: event.from, to: event.to));
   }
+
 }

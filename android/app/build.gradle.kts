@@ -7,8 +7,9 @@ plugins {
 
 android {
     namespace = "com.example.expense_tracker"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    compileSdk = 35
+    ndkVersion = "27.0.1207797" +
+            "3"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

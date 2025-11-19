@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 import '../services/local_storage_service.dart';
 import '../services/exchange_api.dart';
 import '../models/expense.dart';
@@ -5,6 +7,7 @@ import '../models/currency_rate.dart';
 import 'package:uuid/uuid.dart';
 
 class ExpenseRepository {
+
   final LocalStorageService local;
   final ExchangeApi api;
   CurrencyRate? cachedRates;
@@ -19,11 +22,14 @@ class ExpenseRepository {
     String? receiptPath,
   }) async {
     // ensure we have rates
-    print("cachedRates: $cachedRates");
+    debugPrint("cachedRates: $cachedRates");
     final rates = cachedRates ?? await api.fetchLatestRates(base: 'USD').then((r){ cachedRates = r; return r; });
-    print("rates: $rates");
+    debugPrint("rates: $rates");
+
     final converted = api.convert(amount: amount, from: currency, to: 'USD', rates: rates!);
+
     final id = Uuid().v4();
+
     final expense = Expense(
       id: id,
       categoryId: categoryId,

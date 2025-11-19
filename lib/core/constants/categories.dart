@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/category.dart';
 
 class CategoryConstants {
+
   static final List<Category> categories = [
     Category(id: 'groceries', title: 'Groceries', iconName: 'shopping_cart'),
     Category(id: 'entertainment', title: 'Entertainment', iconName: 'local_cafe'),
